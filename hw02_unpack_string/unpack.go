@@ -10,9 +10,9 @@ var ErrInvalidString = errors.New("invalid string")
 
 func Unpack(str string) (string, error) {
 	counter := 0
-	result := make([]rune, 0, 8)
-	lastRune := rune(0)
 	stringLen := utf8.RuneCountInString(str)
+	result := make([]rune, 0, stringLen)
+	lastRune := rune(0)
 
 	for _, r := range str {
 		if counter == 0 && unicode.IsDigit(r) {
