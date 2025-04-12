@@ -18,6 +18,7 @@ func Unpack(str string) (string, error) {
 		if counter == 0 && unicode.IsDigit(r) {
 			return "", ErrInvalidString
 		}
+
 		if counter > 0 {
 			if unicode.IsDigit(r) && unicode.IsDigit(lastRune) {
 				return "", ErrInvalidString
