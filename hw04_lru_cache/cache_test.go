@@ -64,7 +64,6 @@ func TestCache(t *testing.T) {
 	})
 
 	t.Run("purge logic", func(t *testing.T) {
-		t.Skip()
 		c := NewCache(2)
 
 		wasInCache := c.Set("aaa", 100)
@@ -89,7 +88,6 @@ func TestCache(t *testing.T) {
 	})
 
 	t.Run("simple purge", func(t *testing.T) {
-		t.Skip()
 		c := NewCache(2)
 
 		wasInCache := c.Set("aaa", 100)
