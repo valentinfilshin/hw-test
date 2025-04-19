@@ -22,12 +22,11 @@ func (l *lruCache) Set(key Key, value interface{}) bool {
 		beenInCache = true
 	}
 	l.queue.PushFront(value)
-	l.items[key] = l.queue.Front()
+	frontItemLink := l.queue.Front()
+	l.items[key] = frontItemLink
 
 	if l.queue.Len() > l.capacity {
-		// TODO удалить ключ из мапы...
-		delete(l.items, l.queue.Back().Value.(Key))
-
+		//delete(l.items, l.backItems[l.queue.Back()])
 		l.queue.Remove(l.queue.Back())
 	}
 
