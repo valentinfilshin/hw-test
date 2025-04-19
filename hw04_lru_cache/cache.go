@@ -26,7 +26,7 @@ func (l *lruCache) Set(key Key, value interface{}) bool {
 	l.items[key] = frontItemLink
 
 	if l.queue.Len() > l.capacity {
-		//delete(l.items, l.backItems[l.queue.Back()])
+		// delete(l.items, l.backItems[l.queue.Back()])
 		l.queue.Remove(l.queue.Back())
 	}
 
