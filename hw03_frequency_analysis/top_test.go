@@ -80,3 +80,45 @@ func TestTop10(t *testing.T) {
 		}
 	})
 }
+
+func TestTableDrivenTest(t *testing.T) {
+	tests := []struct {
+		name     string
+		text     string
+		expected []string
+	}{
+		{
+			name: "lowThen10UniqWords",
+			text: `a a a b b b c c c x x x o o o`,
+			expected: []string{
+				"a",
+				"b",
+				"c",
+				"o",
+				"x",
+			},
+		},
+		{
+			name: "checkRealSorting",
+			text: `a a a x x x y y y b b b c c c d d d f f f e e e j j j k k k l l l m m m n n n`,
+			expected: []string{
+				"a",
+				"b",
+				"c",
+				"d",
+				"e",
+				"f",
+				"j",
+				"k",
+				"l",
+				"m",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			require.Equal(t, tt.expected, Top10(tt.text))
+		})
+	}
+}
