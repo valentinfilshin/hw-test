@@ -18,7 +18,7 @@ func Top10(text string) []string {
 		uniqueWords[v]++
 	}
 
-	var words []Word
+	words := make([]Word, 0, len(uniqueWords))
 	for k, v := range uniqueWords {
 		words = append(words, Word{k, v})
 	}
