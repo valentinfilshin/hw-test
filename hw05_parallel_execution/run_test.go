@@ -67,4 +67,10 @@ func TestRun(t *testing.T) {
 		require.Equal(t, int32(tasksCount), runTasksCount, "not all tasks were completed")
 		require.LessOrEqual(t, int64(elapsedTime), int64(sumTime/2), "tasks were run sequentially?")
 	})
+
+	// TODO тест кейс, на количество ошибок 0
+
+	// TODO тест кейс, на задачи с ошибками и без
+
+	//
 }
