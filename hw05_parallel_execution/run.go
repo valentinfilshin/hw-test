@@ -24,7 +24,7 @@ func Run(tasks []Task, n, m int) error {
 			mutex.Unlock()
 
 			if curErrorsCount >= m {
-				break
+				return
 			}
 
 			taskChanel <- v
@@ -41,11 +41,7 @@ func Run(tasks []Task, n, m int) error {
 				mutex.Unlock()
 
 				if curErrorsCount >= m {
-					break
-				}
-
-				if task == nil { // Канал закрыт и кончился
-					break
+					return
 				}
 
 				err := task()
