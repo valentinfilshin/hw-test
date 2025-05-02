@@ -1,6 +1,7 @@
 package hw06pipelineexecution
 
 import (
+	"go.uber.org/goleak"
 	"strconv"
 	"sync"
 	"testing"
@@ -88,6 +89,7 @@ func TestPipeline(t *testing.T) {
 	})
 
 	t.Run("done case", func(t *testing.T) {
+		defer goleak.VerifyNone(t)
 		in := make(Bi)
 		done := make(Bi)
 		data := []int{1, 2, 3, 4, 5}
@@ -118,6 +120,7 @@ func TestPipeline(t *testing.T) {
 	})
 
 	t.Run("part completed done case", func(t *testing.T) {
+		defer goleak.VerifyNone(t)
 		in := make(Bi)
 		done := make(Bi)
 		data := []int{1, 2, 3, 4, 5}
