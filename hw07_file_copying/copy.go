@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"io"
 	"os"
 )
@@ -40,7 +39,7 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 		limit = fromFileSize - offset
 	}
 
-	fromFile, err := os.OpenFile(fromPath, os.O_RDONLY, 0644)
+	fromFile, err := os.Open(fromPath)
 	if err != nil {
 		return ErrUnsupportedFile
 	}
@@ -58,11 +57,9 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 	}
 	defer toFile.Close()
 
-	fmt.Println(limit)
 	_, err = io.CopyN(toFile, fromFile, limit)
 	if err != nil {
 		if errors.Is(err, io.EOF) {
-			err = nil
 			return nil
 		}
 		return err
