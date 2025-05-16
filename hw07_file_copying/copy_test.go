@@ -10,6 +10,7 @@ import (
 )
 
 func TestCopy(t *testing.T) {
+	resultFilePath := "output.txt"
 	tests := []struct {
 		name         string // Название теста
 		offset       int64  // Смещение
@@ -25,10 +26,8 @@ func TestCopy(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt // Захватываем переменную внутри итерации
 		t.Run(tt.name, func(t *testing.T) {
 			originalFilePath := "testdata/input.txt"
-			resultFilePath := "output.txt"
 
 			err := Copy(originalFilePath, resultFilePath, tt.offset, tt.limit)
 			if err != nil {
@@ -51,7 +50,6 @@ func TestCopy(t *testing.T) {
 
 	t.Run("offset bigger then file size", func(t *testing.T) {
 		originalFilePath := "testdata/input.txt"
-		resultFilePath := "output.txt"
 
 		limit := int64(0)
 		offset := int64(10000)
@@ -64,7 +62,6 @@ func TestCopy(t *testing.T) {
 
 	t.Run("cant work with /dev/null", func(t *testing.T) {
 		originalFilePath := "/dev/null"
-		resultFilePath := "output.txt"
 
 		limit := int64(0)
 		offset := int64(0)
