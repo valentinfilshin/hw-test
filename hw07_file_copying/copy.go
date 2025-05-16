@@ -1,3 +1,4 @@
+//nolint:depguard
 package main
 
 import (
@@ -5,6 +6,8 @@ import (
 	"errors"
 	"io"
 	"os"
+
+	"github.com/cheggaaa/pb/v3"
 )
 
 var (
@@ -57,13 +60,18 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 	}
 	defer toFile.Close()
 
-	_, err = io.CopyN(toFile, fromFile, limit)
+	bar := pb.Full.Start64(limit)
+	barReader := bar.NewProxyReader(fromFile)
+
+	_, err = io.CopyN(toFile, barReader, limit)
 	if err != nil {
 		if errors.Is(err, io.EOF) {
 			return nil
 		}
 		return err
 	}
+
+	bar.Finish()
 
 	return nil
 }
