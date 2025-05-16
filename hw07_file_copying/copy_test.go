@@ -48,6 +48,30 @@ func TestCopy(t *testing.T) {
 		})
 	}
 
+	t.Run("big file copy", func(t *testing.T) {
+		originalFilePath := "testdata/bigInput.txt"
+
+		limit := int64(0)
+		offset := int64(0)
+
+		err := Copy(originalFilePath, resultFilePath, offset, limit)
+		if err != nil {
+			t.Fatalf("Ошибка копирования файла: %v", err)
+		}
+
+		result, err := CompareFiles(originalFilePath, resultFilePath)
+		if err != nil {
+			t.Fatalf("Ошибка сравнения файлов: %v", err)
+		}
+
+		assert.True(t, result, fmt.Sprintf("Файлы '%s' и '%s' не совпадают", originalFilePath, resultFilePath))
+
+		err = os.Remove(resultFilePath)
+		if err != nil {
+			t.Fatalf("Ошибка удаления файла: %v", err)
+		}
+	})
+
 	t.Run("offset bigger then file size", func(t *testing.T) {
 		originalFilePath := "testdata/input.txt"
 
