@@ -24,8 +24,6 @@ func ReadDir(dir string) (Environment, error) {
 		return nil, err
 	}
 
-	fmt.Println(fileSlice)
-
 	environmentMap := make(Environment, len(dir))
 
 	for _, file := range fileSlice {
