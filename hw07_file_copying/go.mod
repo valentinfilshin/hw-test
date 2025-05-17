@@ -1,4 +1,4 @@
-module github.com //valentinfilshin/hw-test/hw07_file_copying
+module github.com/valentinfilshin/hw-test/hw07_file_copying
 
 go 1.23
 
