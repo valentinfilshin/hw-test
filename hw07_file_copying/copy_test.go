@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"testing"
@@ -84,6 +85,42 @@ func TestCopy(t *testing.T) {
 		require.Equal(t, err, ErrOffsetExceedsFileSize, "Ошибка не верная")
 	})
 
+	t.Run("negative limit", func(t *testing.T) {
+		originalFilePath := "testdata/input.txt"
+
+		limit := int64(-10)
+		offset := int64(10000)
+
+		err := Copy(originalFilePath, resultFilePath, offset, limit)
+
+		require.Error(t, err, "Ошибки нет")
+		require.Equal(t, err, ErrWrongLimit, "Ошибка не верная")
+	})
+
+	t.Run("negative offset", func(t *testing.T) {
+		originalFilePath := "testdata/input.txt"
+
+		limit := int64(0)
+		offset := int64(-10000)
+
+		err := Copy(originalFilePath, resultFilePath, offset, limit)
+
+		require.Error(t, err, "Ошибки нет")
+		require.Equal(t, err, ErrWrongOffset, "Ошибка не верная")
+	})
+
+	t.Run("same paths", func(t *testing.T) {
+		originalFilePath := "testdata/input.txt"
+
+		limit := int64(0)
+		offset := int64(0)
+
+		err := Copy(originalFilePath, originalFilePath, offset, limit)
+
+		require.Error(t, err, "Ошибки нет")
+		require.Equal(t, err, ErrWrongPaths, "Ошибка не верная")
+	})
+
 	t.Run("cant work with /dev/null", func(t *testing.T) {
 		originalFilePath := "/dev/null"
 
@@ -95,4 +132,18 @@ func TestCopy(t *testing.T) {
 		require.Error(t, err, "Ошибки нет")
 		require.Equal(t, err, ErrUnsupportedFile, "Ошибка не верная")
 	})
+}
+
+func CompareFiles(expected, actual string) (bool, error) {
+	bytes1, err := os.ReadFile(expected)
+	if err != nil {
+		return false, ErrReadFile
+	}
+
+	bytes2, err := os.ReadFile(actual)
+	if err != nil {
+		return false, ErrReadFile
+	}
+
+	return bytes.Equal(bytes1, bytes2), nil
 }

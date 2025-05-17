@@ -2,7 +2,6 @@
 package main
 
 import (
-	"bytes"
 	"errors"
 	"io"
 	"os"
@@ -14,18 +13,28 @@ var (
 	ErrUnsupportedFile       = errors.New("unsupported file")
 	ErrCreateFile            = errors.New("can't create file")
 	ErrReadFile              = errors.New("can't read file")
-	ErrFileInfoNil           = errors.New("file info is nil")
 	ErrOffsetExceedsFileSize = errors.New("offset exceeds file size")
+	ErrWrongOffset           = errors.New("offset can't be negative")
+	ErrWrongLimit            = errors.New("limit can't be negative")
+	ErrWrongPaths            = errors.New("paths can't be same")
 )
 
 func Copy(fromPath, toPath string, offset, limit int64) error {
+	if offset < 0 {
+		return ErrWrongOffset
+	}
+
+	if limit < 0 {
+		return ErrWrongLimit
+	}
+
+	if fromPath == toPath {
+		return ErrWrongPaths
+	}
+
 	fromFileInfo, err := os.Stat(fromPath)
 	if err != nil {
 		return err
-	}
-
-	if fromFileInfo == nil {
-		return ErrFileInfoNil
 	}
 
 	if !fromFileInfo.Mode().IsRegular() {
@@ -74,18 +83,4 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 	bar.Finish()
 
 	return nil
-}
-
-func CompareFiles(expected, actual string) (bool, error) {
-	bytes1, err := os.ReadFile(expected)
-	if err != nil {
-		return false, ErrReadFile
-	}
-
-	bytes2, err := os.ReadFile(actual)
-	if err != nil {
-		return false, ErrReadFile
-	}
-
-	return bytes.Equal(bytes1, bytes2), nil
 }
