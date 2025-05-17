@@ -2,8 +2,11 @@ package main
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"fmt"
+	"io"
 	"os"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -35,10 +38,7 @@ func TestCopy(t *testing.T) {
 				t.Fatalf("Ошибка копирования файла: %v", err)
 			}
 
-			result, err := CompareFiles(tt.expectedFile, resultFilePath)
-			if err != nil {
-				t.Fatalf("Ошибка сравнения файлов: %v", err)
-			}
+			result := parallelCompareFiles(tt.expectedFile, resultFilePath)
 
 			assert.True(t, result, fmt.Sprintf("Файлы '%s' и '%s' не совпадают", tt.expectedFile, resultFilePath))
 
@@ -60,10 +60,7 @@ func TestCopy(t *testing.T) {
 			t.Fatalf("Ошибка копирования файла: %v", err)
 		}
 
-		result, err := CompareFiles(originalFilePath, resultFilePath)
-		if err != nil {
-			t.Fatalf("Ошибка сравнения файлов: %v", err)
-		}
+		result := parallelCompareFiles(originalFilePath, resultFilePath)
 
 		assert.True(t, result, fmt.Sprintf("Файлы '%s' и '%s' не совпадают", originalFilePath, resultFilePath))
 
@@ -127,16 +124,47 @@ func TestCopy(t *testing.T) {
 	})
 }
 
-func CompareFiles(expected, actual string) (bool, error) {
-	bytes1, err := os.ReadFile(expected)
-	if err != nil {
-		return false, ErrReadFile
+func parallelCompareFiles(filePath1 string, filePath2 string) bool {
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	ch := make(chan []byte, 2)
+
+	go func() {
+		defer wg.Done()
+		hasher := sha256.New()
+		file1, _ := os.Open(filePath1)
+		defer file1.Close()
+		_, err := io.Copy(hasher, file1)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		ch <- hasher.Sum(nil)
+	}()
+
+	go func() {
+		defer wg.Done()
+		hasher := sha256.New()
+		file2, _ := os.Open(filePath2)
+		defer file2.Close()
+		_, err := io.Copy(hasher, file2)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		ch <- hasher.Sum(nil)
+	}()
+
+	wg.Wait()
+	close(ch)
+
+	hashes := make([][]byte, 2)
+	hashIndex := 0
+	for hash := range ch {
+		hashes[hashIndex] = hash
+		hashIndex++
 	}
 
-	bytes2, err := os.ReadFile(actual)
-	if err != nil {
-		return false, ErrReadFile
-	}
-
-	return bytes.Equal(bytes1, bytes2), nil
+	return bytes.Equal(hashes[0], hashes[1])
 }
