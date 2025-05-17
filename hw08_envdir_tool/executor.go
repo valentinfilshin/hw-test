@@ -9,6 +9,10 @@ import (
 
 // RunCmd runs a command + arguments (cmd) with environment variables from env.
 func RunCmd(cmd []string, env Environment) (returnCode int) {
+	if len(cmd) < 1 {
+		return 1
+	}
+
 	for key, value := range env {
 		if value.NeedRemove {
 			err := syscall.Unsetenv(key)

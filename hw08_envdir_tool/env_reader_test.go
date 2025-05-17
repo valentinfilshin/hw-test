@@ -8,12 +8,11 @@ import (
 
 func TestReadDir(t *testing.T) {
 	expectedEnv := Environment{
-		"BAR":    {Value: "bar", NeedRemove: false},
-		"BARUHA": {Value: "baruha u uha!", NeedRemove: false},
-		"EMPTY":  {NeedRemove: false},
-		"FOO":    {Value: "   foo\nwith new line", NeedRemove: false},
-		"HELLO":  {Value: "\"hello\"", NeedRemove: false},
-		"UNSET":  {NeedRemove: true},
+		"BAR":   {Value: "bar", NeedRemove: false},
+		"EMPTY": {NeedRemove: false},
+		"FOO":   {Value: "   foo\nwith new line", NeedRemove: false},
+		"HELLO": {Value: "\"hello\"", NeedRemove: false},
+		"UNSET": {NeedRemove: true},
 	}
 
 	t.Run("check test cases", func(t *testing.T) {

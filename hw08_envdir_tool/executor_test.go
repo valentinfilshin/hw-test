@@ -1,7 +1,16 @@
 package main
 
-import "testing"
+import (
+	"github.com/stretchr/testify/assert"
+	"testing"
+)
 
 func TestRunCmd(t *testing.T) {
-	// Place your code here
+	t.Run("empty cmd", func(t *testing.T) {
+		env := Environment{}
+		var command []string
+
+		result := RunCmd(command, env)
+		assert.Equal(t, 1, result)
+	})
 }
