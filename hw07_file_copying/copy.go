@@ -12,11 +12,10 @@ import (
 var (
 	ErrUnsupportedFile       = errors.New("unsupported file")
 	ErrCreateFile            = errors.New("can't create file")
-	ErrReadFile              = errors.New("can't read file")
 	ErrOffsetExceedsFileSize = errors.New("offset exceeds file size")
 	ErrWrongOffset           = errors.New("offset can't be negative")
 	ErrWrongLimit            = errors.New("limit can't be negative")
-	ErrWrongPaths            = errors.New("paths can't be same")
+	ErrWrongPaths            = errors.New("path to files can't be same")
 )
 
 func Copy(fromPath, toPath string, offset, limit int64) error {
@@ -28,13 +27,20 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 		return ErrWrongLimit
 	}
 
-	if fromPath == toPath {
-		return ErrWrongPaths
-	}
-
 	fromFileInfo, err := os.Stat(fromPath)
 	if err != nil {
 		return err
+	}
+
+	toFileInfo, err := os.Stat(toPath)
+	if err != nil {
+		if !errors.Is(err, os.ErrNotExist) {
+			return err
+		}
+	}
+
+	if os.SameFile(fromFileInfo, toFileInfo) {
+		return ErrWrongPaths
 	}
 
 	if !fromFileInfo.Mode().IsRegular() {

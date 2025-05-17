@@ -101,6 +101,18 @@ func TestCopy(t *testing.T) {
 		require.Equal(t, err, ErrWrongOffset, "Ошибка не верная")
 	})
 
+	t.Run("same file", func(t *testing.T) {
+		samePath := "testdata/../testdata/input.txt"
+
+		limit := int64(0)
+		offset := int64(0)
+
+		err := Copy(originalFilePath, samePath, offset, limit)
+
+		require.Error(t, err, "Ошибки нет")
+		require.Equal(t, err, ErrWrongPaths, "Ошибка не верная")
+	})
+
 	t.Run("same paths", func(t *testing.T) {
 		limit := int64(0)
 		offset := int64(0)
