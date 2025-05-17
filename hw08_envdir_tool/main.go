@@ -8,8 +8,6 @@ import (
 func main() {
 	args := os.Args[1:]
 
-	fmt.Println(args)
-
 	if len(args) < 2 {
 		fmt.Println("Usage: go-envdir <path> <command> <args>")
 		return
