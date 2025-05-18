@@ -1,21 +1,15 @@
 package hw10programoptimization
 
 import (
-	"encoding/json"
+	"bufio"
 	"fmt"
 	"io"
-	"regexp"
 	"strings"
 )
 
+//go:generate easyjson -all stats.go
 type User struct {
-	ID       int
-	Name     string
-	Username string
-	Email    string
-	Phone    string
-	Password string
-	Address  string
+	Email string
 }
 
 type DomainStat map[string]int
@@ -31,35 +25,39 @@ func GetDomainStat(r io.Reader, domain string) (DomainStat, error) {
 type users [100_000]User
 
 func getUsers(r io.Reader) (result users, err error) {
-	content, err := io.ReadAll(r)
-	if err != nil {
-		return
-	}
+	scanner := bufio.NewScanner(r)
+	i := 0
+	for scanner.Scan() {
+		line := scanner.Bytes()
 
-	lines := strings.Split(string(content), "\n")
-	for i, line := range lines {
+		if len(line) == 0 {
+			continue
+		}
+
 		var user User
-		if err = json.Unmarshal([]byte(line), &user); err != nil {
+		if err = user.UnmarshalJSON(line); err != nil {
 			return
 		}
+
 		result[i] = user
+		i++
 	}
+
 	return
 }
 
 func countDomains(u users, domain string) (DomainStat, error) {
 	result := make(DomainStat)
+	domain = "." + strings.ToLower(domain)
 
 	for _, user := range u {
-		matched, err := regexp.Match("\\."+domain, []byte(user.Email))
-		if err != nil {
-			return nil, err
+		dogIndex := strings.LastIndex(user.Email, "@")
+		if dogIndex < 0 {
+			continue
 		}
-
-		if matched {
-			num := result[strings.ToLower(strings.SplitN(user.Email, "@", 2)[1])]
-			num++
-			result[strings.ToLower(strings.SplitN(user.Email, "@", 2)[1])] = num
+		email := strings.ToLower(user.Email[dogIndex+1:])
+		if strings.HasSuffix(email, domain) {
+			result[email]++
 		}
 	}
 	return result, nil
