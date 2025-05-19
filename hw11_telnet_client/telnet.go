@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"net"
 	"time"
@@ -38,7 +37,6 @@ func (t *Telnet) Connect() error {
 	}
 
 	t.Conn = conn
-	fmt.Println("...Connected to", t.Address, "")
 	return nil
 }
 
