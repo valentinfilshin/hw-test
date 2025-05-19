@@ -1,0 +1,12 @@
+go test -bench=BenchmarkGetDomainStat -benchmem -count 5
+goos: darwin
+goarch: arm64
+pkg: github.com/valentinfilshin/hw-test/hw10_program_optimization
+cpu: Apple M3
+BenchmarkGetDomainStat-8        1000000000               0.09166 ns/op         0 B/op          0 allocs/op
+BenchmarkGetDomainStat-8        1000000000               0.09169 ns/op         0 B/op          0 allocs/op
+BenchmarkGetDomainStat-8        1000000000               0.09076 ns/op         0 B/op          0 allocs/op
+BenchmarkGetDomainStat-8        1000000000               0.09174 ns/op         0 B/op          0 allocs/op
+BenchmarkGetDomainStat-8        1000000000               0.09344 ns/op         0 B/op          0 allocs/op
+PASS
+ok      github.com/valentinfilshin/hw-test/hw10_program_optimization    5.066s

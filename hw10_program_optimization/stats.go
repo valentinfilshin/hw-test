@@ -2,7 +2,6 @@ package hw10programoptimization
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"strings"
 )
@@ -15,17 +14,10 @@ type User struct {
 type DomainStat map[string]int
 
 func GetDomainStat(r io.Reader, domain string) (DomainStat, error) {
-	u, err := getUsers(r)
-	if err != nil {
-		return nil, fmt.Errorf("get users error: %w", err)
-	}
-	return countDomains(u, domain)
-}
-
-type users [100_000]User
-
-func getUsers(r io.Reader) (result users, err error) {
+	result := make(DomainStat)
+	domain = "." + strings.ToLower(domain)
 	scanner := bufio.NewScanner(r)
+
 	i := 0
 	for scanner.Scan() {
 		line := scanner.Bytes()
@@ -35,22 +27,10 @@ func getUsers(r io.Reader) (result users, err error) {
 		}
 
 		var user User
-		if err = user.UnmarshalJSON(line); err != nil {
-			return
+		if err := user.UnmarshalJSON(line); err != nil {
+			return make(DomainStat), err
 		}
 
-		result[i] = user
-		i++
-	}
-
-	return
-}
-
-func countDomains(u users, domain string) (DomainStat, error) {
-	result := make(DomainStat)
-	domain = "." + strings.ToLower(domain)
-
-	for _, user := range u {
 		dogIndex := strings.LastIndex(user.Email, "@")
 		if dogIndex < 0 {
 			continue
@@ -59,6 +39,8 @@ func countDomains(u users, domain string) (DomainStat, error) {
 		if strings.HasSuffix(email, domain) {
 			result[email]++
 		}
+		i++
 	}
+
 	return result, nil
 }
