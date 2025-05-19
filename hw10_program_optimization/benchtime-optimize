@@ -1,0 +1,12 @@
+go test -bench=BenchmarkGetDomainStat -benchmem -count 5
+goos: windows
+goarch: amd64
+pkg: github.com/valentinfilshin/hw-test/hw10_program_optimization
+cpu: 13th Gen Intel(R) Core(TM) i5-13400F
+BenchmarkGetDomainStat-16       1000000000               0.09979 ns/op         0 B/op          0 allocs/op
+BenchmarkGetDomainStat-16       1000000000               0.09794 ns/op         0 B/op          0 allocs/op
+BenchmarkGetDomainStat-16       1000000000               0.09744 ns/op         0 B/op          0 allocs/op
+BenchmarkGetDomainStat-16       1000000000               0.09764 ns/op         0 B/op          0 allocs/op
+BenchmarkGetDomainStat-16       1000000000               0.09813 ns/op         0 B/op          0 allocs/op
+PASS
+ok      github.com/valentinfilshin/hw-test/hw10_program_optimization    5.425s
