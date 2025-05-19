@@ -20,7 +20,7 @@ func TestRunCmd(t *testing.T) {
 		command := []string{"wrong command", "hi"}
 
 		result := RunCmd(command, env)
-		assert.Equal(t, 1, result)
+		assert.Equal(t, -1, result)
 	})
 
 	t.Run("good command", func(t *testing.T) {

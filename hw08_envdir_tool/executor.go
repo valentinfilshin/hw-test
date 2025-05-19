@@ -39,7 +39,7 @@ func RunCmd(cmd []string, env Environment) (returnCode int) {
 	err := commandExec.Run()
 	if err != nil {
 		fmt.Println("command:", command, "error:", err)
-		return 1
+		return commandExec.ProcessState.ExitCode()
 	}
 
 	return commandExec.ProcessState.ExitCode()
