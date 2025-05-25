@@ -2,15 +2,22 @@ package app
 
 import (
 	"context"
+	"github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/storage"
 )
 
 type App struct { // TODO
 }
 
-type Logger interface { // TODO
+type Logger interface {
+	Info(msg string)
+	Error(msg string)
 }
 
-type Storage interface { // TODO
+type Storage interface {
+	AddEvent(event storage.Event) error
+	ChangeEvent(event storage.Event) error
+	RemoveEvent(id string) error
+	GetEvents(userID int) ([]storage.Event, error)
 }
 
 func New(logger Logger, storage Storage) *App {
