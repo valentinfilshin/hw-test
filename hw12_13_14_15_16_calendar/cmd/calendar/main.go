@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/logger"
 	"os"
 	"os/signal"
 	"syscall"
@@ -11,6 +10,7 @@ import (
 
 	"github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/app"
 	"github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/config"
+	"github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/logger"
 	internalhttp "github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/server/http"
 	memorystorage "github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/storage/memory"
 )
