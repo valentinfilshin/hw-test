@@ -1,7 +1,46 @@
 package main
 
+import (
+	"fmt"
+	"os"
+	"os/exec"
+	"syscall"
+)
+
 // RunCmd runs a command + arguments (cmd) with environment variables from env.
 func RunCmd(cmd []string, env Environment) (returnCode int) {
-	// Place your code here.
-	return
+	if len(cmd) < 1 {
+		return 1
+	}
+
+	for key, value := range env {
+		if value.NeedRemove {
+			err := syscall.Unsetenv(key)
+			if err != nil {
+				return 1
+			}
+		} else {
+			err := syscall.Setenv(key, value.Value)
+			if err != nil {
+				return 1
+			}
+		}
+	}
+
+	command := cmd[0]
+	args := cmd[1:]
+
+	commandExec := exec.Command(command, args...)
+
+	commandExec.Stdin = os.Stdin
+	commandExec.Stdout = os.Stdout
+	commandExec.Stderr = os.Stderr
+
+	err := commandExec.Run()
+	if err != nil {
+		fmt.Println("command:", command, "error:", err)
+		return commandExec.ProcessState.ExitCode()
+	}
+
+	return commandExec.ProcessState.ExitCode()
 }
