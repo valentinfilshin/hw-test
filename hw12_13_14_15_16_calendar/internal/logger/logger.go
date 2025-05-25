@@ -1,20 +1,41 @@
 package logger
 
-import "fmt"
+import (
+	"fmt"
+	"log/slog"
+	"os"
 
-type Logger struct { // TODO
+	// TODO Нормально ли так делать зависимость?
+	"github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/config"
+)
+
+// TODO не перемудрил ли тут? или можно просто в main.go сконфигурировать slog?
+type Logger struct {
+	slog.Logger
 }
 
-func New(level string) *Logger {
-	return &Logger{}
+func (l *Logger) Info(msg string) {
+	l.Logger.Info(msg)
 }
 
-func (l Logger) Info(msg string) {
-	fmt.Println(msg)
+func (l *Logger) Error(msg string) {
+	l.Logger.Error(msg)
 }
 
-func (l Logger) Error(msg string) {
-	// TODO
-}
+func New(cfg config.LoggerConf) *Logger {
+	var level slog.Level
+	err := level.UnmarshalText([]byte(cfg.Level))
+	if err != nil {
+		// TODO как правильно логировать ошибки при старте программы?
+		fmt.Println("Error parsing log level:", err)
+		level = slog.LevelInfo
+	}
 
-// TODO
+	slogOptions := &slog.HandlerOptions{
+		Level:     level,
+		AddSource: cfg.AddSource,
+	}
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, slogOptions))
+
+	return &Logger{*logger}
+}
