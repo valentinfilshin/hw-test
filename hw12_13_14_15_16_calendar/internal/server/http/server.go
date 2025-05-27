@@ -7,7 +7,6 @@ import (
 type Server struct { // TODO
 }
 
-// TODO где лучше хранить интерфейс в месте использования или в месте реализации?
 type Logger interface {
 	Info(msg string)
 	Error(msg string)

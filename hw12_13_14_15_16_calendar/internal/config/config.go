@@ -2,7 +2,7 @@ package config
 
 import (
 	"context"
-	"fmt"
+	"errors"
 
 	"github.com/heetch/confita"
 	"github.com/heetch/confita/backend/file"
@@ -17,15 +17,11 @@ type LoggerConf struct {
 	AddSource bool   `config:"add_source"`
 }
 
-func NewConfig(configFile string) Config {
-	cfg := Config{}
+func LoadConfig(configFile string) (*Config, error) {
+	cfg := &Config{}
 	err := confita.NewLoader(file.NewBackend(configFile)).Load(context.Background(), &cfg)
 	if err != nil {
-		// TODO как правильно логировать ошибки при старте программы?
-		_ = fmt.Errorf(
-			"failed to load config: %v",
-			err,
-		)
+		return nil, errors.New("failed to load config")
 	}
-	return cfg
+	return cfg, nil
 }
