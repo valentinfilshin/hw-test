@@ -20,6 +20,11 @@ func New() *Storage {
 func (s *Storage) AddEvent(event storage.Event) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+
+	if event.ID == "" {
+		return storage.ErrEmptyEventId
+	}
+
 	if _, ok := s.events[event.ID]; ok {
 		return storage.ErrEventExists
 	}
@@ -41,7 +46,7 @@ func (s *Storage) GetEvents(userID int, from, to time.Time) ([]storage.Event, er
 	}
 
 	if len(result) == 0 {
-		return nil, storage.ErrNotFound
+		return nil, storage.ErrEventsNotFound
 	}
 
 	return result, nil

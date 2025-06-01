@@ -6,9 +6,10 @@ import (
 )
 
 var (
-	ErrEventNotExist = errors.New("event not exists")
-	ErrEventExists   = errors.New("event already exists")
-	ErrNotFound      = errors.New("events not found")
+	ErrEventNotExist  = errors.New("event not exists")
+	ErrEventExists    = errors.New("event already exists")
+	ErrEventsNotFound = errors.New("events not found")
+	ErrEmptyEventId   = errors.New("event id can't be empty")
 )
 
 type Event struct {
