@@ -17,7 +17,6 @@ type Storage interface {
 	AddEvent(event storage.Event) error
 	ChangeEvent(event storage.Event) error
 	RemoveEvent(id string) error
-	GetEvents(userID int) ([]storage.Event, error)
 }
 
 func New(logger Logger, storage Storage) *App {

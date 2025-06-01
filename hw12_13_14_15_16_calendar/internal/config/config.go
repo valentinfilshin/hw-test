@@ -2,7 +2,7 @@ package config
 
 import (
 	"context"
-	"errors"
+	"fmt"
 
 	"github.com/heetch/confita"
 	"github.com/heetch/confita/backend/file"
@@ -19,9 +19,9 @@ type LoggerConf struct {
 
 func LoadConfig(configFile string) (*Config, error) {
 	cfg := &Config{}
-	err := confita.NewLoader(file.NewBackend(configFile)).Load(context.Background(), &cfg)
+	err := confita.NewLoader(file.NewBackend(configFile)).Load(context.Background(), cfg)
 	if err != nil {
-		return nil, errors.New("failed to load config")
+		return nil, fmt.Errorf("failed to load config: %w", err)
 	}
 	return cfg, nil
 }

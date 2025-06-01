@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -19,27 +20,29 @@ import (
 var configFile string
 
 func init() {
-	flag.StringVar(&configFile, "config", "../../configs/config.yaml", "Path to configuration file")
+	flag.StringVar(&configFile, "config", "./configs/config.yaml", "Path to configuration file")
 }
 
 func main() {
 	flag.Parse()
 
-	if flag.Arg(0) == "version" {
-		printVersion()
-		return
-	}
-
+	fmt.Println(configFile)
+	// 1. Загружаем конфигурацию
 	cfg, err := config.LoadConfig(configFile)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// 2. Создаем логгер
 	logg := logger.New(cfg.Logger)
 
+	// 3. Создаем хранилище по условию?
 	storage := memorystorage.New()
+
+	// 4. Бизнес-логика
 	calendar := app.New(logg, storage)
 
+	// 5. Запускаем сервер
 	server := internalhttp.NewServer(logg, calendar)
 
 	ctx, cancel := signal.NotifyContext(context.Background(),
@@ -58,7 +61,6 @@ func main() {
 	}()
 
 	logg.Info("calendar is running...")
-	logg.Debug("calendar is running...")
 
 	if err := server.Start(ctx); err != nil {
 		logg.Error("failed to start http server: " + err.Error())
