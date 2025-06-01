@@ -2,9 +2,16 @@ package internalhttp
 
 import (
 	"context"
+	"errors"
+	"net/http"
+	"time"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
-type Server struct { // TODO
+type Server struct {
+	*http.Server
 }
 
 type Logger interface {
@@ -16,18 +23,59 @@ type Application interface { // TODO
 }
 
 func NewServer(logger Logger, app Application) *Server {
-	return &Server{}
+	// TODO add config params
+	router := chi.NewRouter()
+
+	router.Use(middleware.RequestID)
+
+	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		time.Sleep(3 * time.Second)
+
+		_, err := w.Write([]byte("Hello, world!"))
+		if err != nil {
+			return
+		}
+	})
+	router.Get("/hello", func(w http.ResponseWriter, r *http.Request) {
+		_, err := w.Write([]byte("Hello, world!"))
+		if err != nil {
+			return
+		}
+	})
+
+	var srv *http.Server
+
+	srv = &http.Server{
+		Addr:         ":8080",
+		Handler:      router,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 5 * time.Second,
+		IdleTimeout:  60 * time.Second,
+	}
+
+	return &Server{srv}
 }
 
 func (s *Server) Start(ctx context.Context) error {
-	// TODO
+	go func() {
+		if err := s.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+
+		}
+	}()
+
 	<-ctx.Done()
-	return nil
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	return s.Stop(ctx)
 }
 
 func (s *Server) Stop(ctx context.Context) error {
-	// TODO
+	err := s.Shutdown(ctx)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
-
-// TODO

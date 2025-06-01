@@ -2,7 +2,10 @@ module github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar
 
 go 1.23
 
-require github.com/heetch/confita v0.10.0
+require (
+	github.com/go-chi/chi/v5 v5.2.1
+	github.com/heetch/confita v0.10.0
+)
 
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
