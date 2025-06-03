@@ -4,11 +4,13 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/jackc/pgx/v5"
 	"github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/app"
 	"github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/config"
 	"github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/logger"
 	internalhttp "github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/server/http"
 	memorystorage "github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/storage/memory"
+	sqlstorage "github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/storage/sql"
 	"log"
 	"os"
 	"os/signal"
@@ -24,7 +26,6 @@ func init() {
 func main() {
 	flag.Parse()
 
-	fmt.Println(configFile)
 	// 1. Загружаем конфигурацию
 	cfg, err := config.LoadConfig(configFile)
 	if err != nil {
@@ -34,8 +35,20 @@ func main() {
 	// 2. Создаем логгер
 	logg := logger.New(cfg.Logger)
 
-	// 3. Создаем хранилище по условию?
-	storage := memorystorage.New()
+	// 3. Создаем хранилища
+	var storage app.Storage
+	if cfg.Storage.Type == "postgres" {
+		storage = sqlstorage.New()
+	} else {
+		storage = memorystorage.New()
+	}
+
+	conn, err := pgx.Connect(context.Background(), "postgresql://user:password@localhost:15432/calendar")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer conn.Close(context.Background())
 
 	// 4. Бизнес-логика
 	calendar := app.New(logg, storage)

@@ -8,8 +8,10 @@ import (
 
 type Storage struct {
 	events map[string]storage.Event
-	mu     sync.RWMutex //nolint:unused
+	mu     sync.RWMutex
 }
+
+// TODO добавить добавление не заблокированного слота
 
 func New() *Storage {
 	return &Storage{

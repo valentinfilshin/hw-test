@@ -2,14 +2,14 @@ services:
   postgres:
     image: postgres:15
     ports:
-      - 15432:5432
+      - ${POSTGRESQL_PORT}:5432
     container_name: 'postgresql'
     working_dir: /app
     restart: always
     environment:
-      POSTGRES_DB: 'calendar'
-      POSTGRES_USER: 'user'
-      POSTGRES_PASSWORD: 'password'
+      POSTGRES_DB: ${POSTGRESQL_DB}
+      POSTGRES_USER: ${POSTGRESQL_USER}
+      POSTGRES_PASSWORD: ${POSTGRESQL_PASS}
     volumes:
       - dump:/dump
       - postgresql:/var/lib/postgresql/data
