@@ -27,16 +27,19 @@ func NewServer(logger Logger, app Application) *Server {
 	router := chi.NewRouter()
 
 	router.Use(middleware.RequestID)
+	// Вариант 1
+	// проблема в том, что я работаю с интерфейсом логера, а не с самим slog
+	// возможно стоит slog вынести глобально? чтобы не прокидывать его везде зависимостью
+	// что в этом может быть плохого?
+
+	// Вариант 2
+	// можно просто на основании метода интерфейса собрать данные в структуру и вывести их,
+	// но из-за этого мне везде приходится таскать логгер
+	router.Use(middleware.Logger)
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		time.Sleep(3 * time.Second)
 
-		_, err := w.Write([]byte("Hello, world!"))
-		if err != nil {
-			return
-		}
-	})
-	router.Get("/hello", func(w http.ResponseWriter, r *http.Request) {
 		_, err := w.Write([]byte("Hello, world!"))
 		if err != nil {
 			return
