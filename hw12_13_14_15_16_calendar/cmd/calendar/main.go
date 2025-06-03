@@ -3,8 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
-	"github.com/jackc/pgx/v5"
 	"github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/app"
 	"github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/config"
 	"github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/logger"
@@ -42,13 +40,6 @@ func main() {
 	} else {
 		storage = memorystorage.New()
 	}
-
-	conn, err := pgx.Connect(context.Background(), "postgresql://user:password@localhost:15432/calendar")
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	defer conn.Close(context.Background())
 
 	// 4. Бизнес-логика
 	calendar := app.New(logg, storage)
