@@ -4,3 +4,5 @@ logger:
 storage:
   type: "postgres"
   dsn: "host=localhost port=15432 user=user password=password dbname=calendar sslmode=disable"
+server:
+  addr: ":8080"

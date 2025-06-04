@@ -11,6 +11,7 @@ import (
 type Config struct {
 	Logger  LoggerConf
 	Storage StorageConf
+	Server  ServerConf
 }
 
 type LoggerConf struct {
@@ -21,6 +22,10 @@ type LoggerConf struct {
 type StorageConf struct {
 	Type string `config:"type"`
 	DSN  string `config:"dsn"`
+}
+
+type ServerConf struct {
+	Addr string
 }
 
 func LoadConfig(configFile string) (*Config, error) {
