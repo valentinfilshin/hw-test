@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/storage"
 
-	_ "github.com/jackc/pgx/v5"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
 	"time"
 )
@@ -20,7 +20,7 @@ func New(dsn string) *Storage {
 }
 
 func (s *Storage) Connect(ctx context.Context) error {
-	db, err := sqlx.Connect("postgres", dsn)
+	db, err := sqlx.ConnectContext(ctx, "pgx", s.dsn)
 
 	if err != nil {
 		return fmt.Errorf("could not connect to database: %w", err)

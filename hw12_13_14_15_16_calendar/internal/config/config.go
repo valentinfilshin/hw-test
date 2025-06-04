@@ -19,12 +19,8 @@ type LoggerConf struct {
 }
 
 type StorageConf struct {
-	Type     string `config:"type"`
-	DB       string `config:"db"`
-	User     string `config:"user"`
-	Password string `config:"password"`
-	Host     string `config:"host"`
-	Port     string `config:"port"`
+	Type string `config:"type"`
+	DSN  string `config:"dsn"`
 }
 
 func LoadConfig(configFile string) (*Config, error) {

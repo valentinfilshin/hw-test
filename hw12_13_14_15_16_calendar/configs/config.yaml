@@ -2,9 +2,5 @@ logger:
   level: "DEBUG"
   add_source: false
 storage:
-  type: "memory"
-  db: ""
-  user: ""
-  password: ""
-  host: ""
-  port: ""
+  type: "postgres"
+  dsn: "host=localhost port=15432 user=user password=password dbname=calendar sslmode=disable"

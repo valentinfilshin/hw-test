@@ -3,6 +3,7 @@ package internalhttp
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -59,19 +60,12 @@ func NewServer(logger Logger, app Application) *Server {
 	return &Server{srv}
 }
 
-func (s *Server) Start(ctx context.Context) error {
-	go func() {
-		if err := s.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+func (s *Server) Start() error {
+	if err := s.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		return fmt.Errorf("failed to start server: %w", err)
+	}
 
-		}
-	}()
-
-	<-ctx.Done()
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	return s.Stop(ctx)
+	return nil
 }
 
 func (s *Server) Stop(ctx context.Context) error {

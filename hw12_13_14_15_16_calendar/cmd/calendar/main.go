@@ -10,9 +10,9 @@ import (
 	memorystorage "github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/storage/memory"
 	sqlstorage "github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/storage/sql"
 	"log"
-	"os"
 	"os/signal"
 	"syscall"
+	"time"
 )
 
 var configFile string
@@ -36,7 +36,29 @@ func main() {
 	// 3. Создаем хранилища
 	var storage app.Storage
 	if cfg.Storage.Type == "postgres" {
-		storage = sqlstorage.New()
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		postgresqlStorage := sqlstorage.New(cfg.Storage.DSN)
+
+		err := postgresqlStorage.Connect(ctx)
+		if err != nil {
+			logg.Error("failed to connect to database: " + err.Error())
+			return
+		}
+
+		logg.Info("connected to database")
+
+		defer func() {
+			ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+			defer cancel()
+			err := postgresqlStorage.Close(ctx)
+			if err != nil {
+				logg.Error("failed to close database: " + err.Error())
+			}
+		}()
+
+		storage = postgresqlStorage
 	} else {
 		storage = memorystorage.New()
 	}
@@ -51,11 +73,21 @@ func main() {
 		syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 	defer cancel()
 
-	logg.Info("calendar is running...")
+	logg.Info("calendar is running")
 
-	if err := server.Start(ctx); err != nil {
-		logg.Error("failed to start http server: " + err.Error())
-		cancel()
-		os.Exit(1) //nolint:gocritic
+	go func() {
+		if err := server.Start(); err != nil {
+			logg.Error("failed to start http server: " + err.Error())
+		}
+	}()
+
+	<-ctx.Done()
+	logg.Info("calendar is stopped")
+
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	err = server.Stop(ctx)
+	if err != nil {
+		logg.Error("failed to stop http server: " + err.Error())
 	}
 }
