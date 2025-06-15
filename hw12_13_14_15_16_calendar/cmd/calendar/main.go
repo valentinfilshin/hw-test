@@ -33,7 +33,7 @@ func main() {
 	}
 
 	// 2. Создаем логгер
-	logg := logger.New(cfg.Logger)
+	logg := logger.New(cfg.Logger.Level, cfg.Logger.AddSource)
 
 	// 3. Создаем хранилища
 	var storage app.Storage

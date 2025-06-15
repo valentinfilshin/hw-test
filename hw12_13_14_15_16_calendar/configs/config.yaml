@@ -2,7 +2,7 @@ logger:
   level: "DEBUG"
   add_source: false
 storage:
-  type: "postgres"
+  type: "file"
   dsn: "host=localhost port=15432 user=user password=password dbname=calendar sslmode=disable"
 server:
   addr: ":8080"

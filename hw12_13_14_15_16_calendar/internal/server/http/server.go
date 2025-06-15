@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"net/http"
 	"time"
 
@@ -12,7 +13,7 @@ import (
 )
 
 type Server struct {
-	*http.Server
+	srv *http.Server
 }
 
 type Logger interface {
@@ -27,11 +28,10 @@ func NewServer(logger Logger, addr string, app Application) *Server {
 	router := chi.NewRouter()
 
 	router.Use(middleware.RequestID)
-	router.Use(LoggerMiddleware)
+	router.Use(middleware.RealIP)
+	router.Use(NewLoggingMiddleware(logger))
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		time.Sleep(3 * time.Second)
-
 		_, err := w.Write([]byte("Hello, world!"))
 		if err != nil {
 			return
@@ -48,11 +48,13 @@ func NewServer(logger Logger, addr string, app Application) *Server {
 		IdleTimeout:  60 * time.Second,
 	}
 
-	return &Server{srv}
+	return &Server{
+		srv: srv,
+	}
 }
 
 func (s *Server) Start() error {
-	if err := s.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+	if err := s.srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return fmt.Errorf("failed to start server: %w", err)
 	}
 
@@ -60,7 +62,7 @@ func (s *Server) Start() error {
 }
 
 func (s *Server) Stop(ctx context.Context) error {
-	err := s.Shutdown(ctx)
+	err := s.srv.Shutdown(ctx)
 	if err != nil {
 		return err
 	}
