@@ -80,7 +80,6 @@ func main() {
 	}()
 
 	<-ctx.Done()
-	logg.Info("calendar is stopped")
 
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -88,4 +87,6 @@ func main() {
 	if err != nil {
 		logg.Error("failed to stop http server: " + err.Error())
 	}
+
+	logg.Info("calendar is stopped")
 }
