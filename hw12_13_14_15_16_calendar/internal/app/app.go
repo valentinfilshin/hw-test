@@ -21,11 +21,11 @@ type Storage interface {
 	GetEvents(userID int, from, to time.Time) ([]storage.Event, error)
 }
 
-func New(logger Logger, storage Storage) *App {
+func New(_ Logger, _ Storage) *App {
 	return &App{}
 }
 
-func (a *App) CreateEvent(ctx context.Context, id, title string) error {
+func (a *App) CreateEvent(_ context.Context, _, _ string) error {
 	// TODO
 	return nil
 	// return a.storage.CreateEvent(storage.Event{ID: id, Title: title})

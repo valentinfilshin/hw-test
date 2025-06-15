@@ -139,7 +139,6 @@ func TestMemoryStorage_AddEvent(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-
 			err := s.AddEvent(tc.event)
 			if !errors.Is(err, tc.expectedErr) {
 				t.Errorf("expected error %v, got %v", tc.expectedErr, err)
@@ -240,7 +239,7 @@ func TestMemoryStorage_ListEvents(t *testing.T) {
 
 	getCases := []struct {
 		name        string
-		userId      int
+		userID      int
 		eventsCount int
 		startTime   time.Time
 		endTime     time.Time
@@ -248,35 +247,35 @@ func TestMemoryStorage_ListEvents(t *testing.T) {
 	}{
 		{
 			name:        "get events user 1",
-			userId:      1,
+			userID:      1,
 			eventsCount: 2,
 			startTime:   time.Date(2025, 5, 16, 0, 0, 0, 0, time.UTC),
 			endTime:     time.Date(2025, 6, 18, 0, 0, 0, 0, time.UTC),
 		},
 		{
 			name:        "get events user 1 other period",
-			userId:      1,
+			userID:      1,
 			eventsCount: 3,
 			startTime:   time.Date(2025, 1, 17, 0, 0, 0, 0, time.UTC),
 			endTime:     time.Date(2025, 6, 18, 0, 0, 0, 0, time.UTC),
 		},
 		{
 			name:        "get events user 2",
-			userId:      2,
+			userID:      2,
 			eventsCount: 2,
 			startTime:   time.Date(2025, 6, 16, 0, 0, 0, 0, time.UTC),
 			endTime:     time.Date(2025, 6, 16, 23, 0, 0, 0, time.UTC),
 		},
 		{
 			name:        "get events with not exist user",
-			userId:      100,
+			userID:      100,
 			startTime:   time.Date(2025, 5, 16, 10, 0, 0, 0, time.UTC),
 			endTime:     time.Date(2025, 5, 17, 10, 0, 0, 0, time.UTC),
 			expectedErr: storage.ErrEventsNotFound,
 		},
 		{
 			name:        "get events with not exist period",
-			userId:      1,
+			userID:      1,
 			startTime:   time.Date(2025, 4, 16, 10, 0, 0, 0, time.UTC),
 			endTime:     time.Date(2025, 4, 17, 10, 0, 0, 0, time.UTC),
 			expectedErr: storage.ErrEventsNotFound,
@@ -285,7 +284,7 @@ func TestMemoryStorage_ListEvents(t *testing.T) {
 
 	for _, tc := range getCases {
 		t.Run(tc.name, func(t *testing.T) {
-			events, err := s.GetEvents(tc.userId, tc.startTime, tc.endTime)
+			events, err := s.GetEvents(tc.userID, tc.startTime, tc.endTime)
 			if !errors.Is(err, tc.expectedErr) {
 				t.Errorf("expected error %v, got %v", tc.expectedErr, err)
 			}

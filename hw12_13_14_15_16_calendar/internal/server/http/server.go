@@ -24,23 +24,21 @@ type Logger interface {
 type Application interface { // TODO
 }
 
-func NewServer(logger Logger, addr string, app Application) *Server {
+func NewServer(logger Logger, addr string, _ Application) *Server {
 	router := chi.NewRouter()
 
 	router.Use(middleware.RequestID)
 	router.Use(middleware.RealIP)
 	router.Use(NewLoggingMiddleware(logger))
 
-	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
+	router.Get("/", func(w http.ResponseWriter, _ *http.Request) {
 		_, err := w.Write([]byte("Hello, world!"))
 		if err != nil {
 			return
 		}
 	})
 
-	var srv *http.Server
-
-	srv = &http.Server{
+	srv := &http.Server{
 		Addr:         addr,
 		Handler:      router,
 		ReadTimeout:  5 * time.Second,

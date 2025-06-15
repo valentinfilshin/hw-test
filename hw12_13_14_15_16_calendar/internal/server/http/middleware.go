@@ -2,11 +2,9 @@ package internalhttp
 
 import (
 	"fmt"
-
+	"github.com/go-chi/chi/v5/middleware"
 	"net/http"
 	"time"
-
-	"github.com/go-chi/chi/v5/middleware"
 )
 
 func NewLoggingMiddleware(l Logger) func(next http.Handler) http.Handler {
@@ -26,7 +24,8 @@ func NewLoggingMiddleware(l Logger) func(next http.Handler) http.Handler {
 
 			statusCode := ww.Status()
 
-			logMessage := fmt.Sprintf("request to %s completed in %v method: %s userAgent: %s realIP: %s httpVersion: %s status: %v requestID: %s",
+			logMessage := fmt.Sprintf("request to %s completed in %v method: %s userAgent: %s "+
+				"realIP: %s httpVersion: %s status: %v requestID: %s",
 				url,
 				time.Since(start),
 				method,
