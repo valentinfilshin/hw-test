@@ -3,10 +3,7 @@
 3. In-memory хранение +
 4. In-memory тест +
 5. PostgreSQL миграции +
-6. PostgreSQL хранение - 2 часа
+6. PostgreSQL хранение +
 7. HTTP server +
 8. HTTP middleware +
-9. MAKE FILE - 2 часа
-
-Разобраться для себя:
-// маппинг структуры в БД?
+9. MAKE FILE - 30-60 минут

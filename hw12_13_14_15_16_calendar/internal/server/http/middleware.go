@@ -2,9 +2,10 @@ package internalhttp
 
 import (
 	"fmt"
-	"github.com/go-chi/chi/v5/middleware"
 	"net/http"
 	"time"
+
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 func NewLoggingMiddleware(l Logger) func(next http.Handler) http.Handler {

@@ -6,10 +6,8 @@ toolchain go1.24.1
 
 require (
 	github.com/go-chi/chi/v5 v5.2.1
-	github.com/google/uuid v1.6.0
 	github.com/heetch/confita v0.10.0
 	github.com/jackc/pgx/v5 v5.7.5
-	github.com/jmoiron/sqlx v1.4.0
 )
 
 require (

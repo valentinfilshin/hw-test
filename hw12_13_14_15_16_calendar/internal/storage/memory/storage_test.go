@@ -3,10 +3,11 @@ package memorystorage
 import (
 	"errors"
 	"fmt"
-	"github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/storage"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/storage"
 )
 
 func TestMemoryStorage_AddEvent(t *testing.T) {

@@ -3,16 +3,17 @@ package main
 import (
 	"context"
 	"flag"
+	"log"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/app"
 	"github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/config"
 	"github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/logger"
 	internalhttp "github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/server/http"
 	memorystorage "github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/storage/memory"
 	sqlstorage "github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/storage/sql"
-	"log"
-	"os/signal"
-	"syscall"
-	"time"
 )
 
 var configFile string
@@ -33,15 +34,12 @@ func main() {
 	// 2. Создаем логгер
 	logg := logger.New(cfg.Logger.Level, cfg.Logger.AddSource)
 
-	// 3. Создаем хранилища
+	// 3. Создаем хранилище
 	var storage app.Storage
 	if cfg.Storage.Type == "postgres" {
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-
 		postgresqlStorage := sqlstorage.New(cfg.Storage.DSN)
 
-		err := postgresqlStorage.Connect(ctx)
+		err := postgresqlStorage.Connect()
 		if err != nil {
 			logg.Error("failed to connect to database: " + err.Error())
 			return

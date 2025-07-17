@@ -2,8 +2,9 @@ package app
 
 import (
 	"context"
-	"github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/storage"
 	"time"
+
+	"github.com/valentinfilshin/hw-test/hw12_13_14_15_calendar/internal/storage"
 )
 
 type App struct { // TODO
