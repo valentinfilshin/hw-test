@@ -1,20 +1,43 @@
 package logger
 
-import "fmt"
+import (
+	"log/slog"
+	"os"
+	"strings"
+)
 
-type Logger struct { // TODO
+type Logger struct {
+	*slog.Logger
 }
 
-func New(level string) *Logger {
-	return &Logger{}
+func (l *Logger) Info(msg string) {
+	l.Logger.Info(msg)
 }
 
-func (l Logger) Info(msg string) {
-	fmt.Println(msg)
+func (l *Logger) Error(msg string) {
+	l.Logger.Error(msg)
 }
 
-func (l Logger) Error(msg string) {
-	// TODO
-}
+func New(lvl string, addSource bool) *Logger {
+	sLvl := slog.LevelInfo
 
-// TODO
+	switch strings.ToLower(lvl) {
+	case "debug":
+		sLvl = slog.LevelDebug
+	case "info":
+		sLvl = slog.LevelInfo
+	case "warn":
+		sLvl = slog.LevelWarn
+	case "error":
+		sLvl = slog.LevelError
+	}
+
+	slogOptions := &slog.HandlerOptions{
+		Level:     sLvl,
+		AddSource: addSource,
+	}
+
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, slogOptions))
+
+	return &Logger{logger}
+}

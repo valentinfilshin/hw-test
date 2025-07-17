@@ -2,30 +2,67 @@ package internalhttp
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"net/http"
+	"time"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
-type Server struct { // TODO
+type Server struct {
+	srv *http.Server
 }
 
-type Logger interface { // TODO
+type Logger interface {
+	Info(msg string)
+	Error(msg string)
 }
 
 type Application interface { // TODO
 }
 
-func NewServer(logger Logger, app Application) *Server {
-	return &Server{}
+func NewServer(logger Logger, addr string, _ Application) *Server {
+	router := chi.NewRouter()
+
+	router.Use(middleware.RequestID)
+	router.Use(middleware.RealIP)
+	router.Use(NewLoggingMiddleware(logger))
+
+	router.Get("/", func(w http.ResponseWriter, _ *http.Request) {
+		_, err := w.Write([]byte("Hello, world!"))
+		if err != nil {
+			return
+		}
+	})
+
+	srv := &http.Server{
+		Addr:         addr,
+		Handler:      router,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 5 * time.Second,
+		IdleTimeout:  60 * time.Second,
+	}
+
+	return &Server{
+		srv: srv,
+	}
 }
 
-func (s *Server) Start(ctx context.Context) error {
-	// TODO
-	<-ctx.Done()
+func (s *Server) Start() error {
+	if err := s.srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		return fmt.Errorf("failed to start server: %w", err)
+	}
+
 	return nil
 }
 
 func (s *Server) Stop(ctx context.Context) error {
-	// TODO
+	err := s.srv.Shutdown(ctx)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
-
-// TODO
